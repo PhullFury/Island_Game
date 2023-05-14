@@ -31,12 +31,24 @@ private:
 	/*UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 		UCameraComponent* FPCamera;*/
 	UPROPERTY(EditAnywhere, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-		float TurnRate = 10.f;
+		float TurnRate = 50.f;
 	UPROPERTY(EditAnywhere, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-		float IslandManSpeed = 300.f;
+		float IslandManSpeed = 500.f;
+	UPROPERTY(EditAnywhere, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+		float MaxSprintModifier = 2.f;
+	UPROPERTY(EditAnywhere, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+		float SprintRate = 2.f;
+	UPROPERTY(EditAnywhere, Category = "General", meta = (AllowPrivateAccess = "true"))
+		bool bShowDebug = false;
+
+	float CurrentSprintModifier;
+	bool bIsSprinting;
 
 	void MoveForward(float AxisValue);
 	void MoveSideways(float AxisValue);
 	void LookVertical(float AxisValue);
 	void LookHorizontal(float AxisValue);
+	void StartSprint();
+	void StopSprint();
+	void SetSpeed(float DeltaTime);
 };

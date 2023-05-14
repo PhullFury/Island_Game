@@ -26,6 +26,8 @@ void AIslandMan::BeginPlay()
 	Super::BeginPlay();
 	
 	GetCharacterMovement()->MaxWalkSpeed = IslandManSpeed;
+	CurrentSprintModifier = 1;
+	bIsSprinting = false;
 }
 
 // Called every frame
@@ -33,6 +35,11 @@ void AIslandMan::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	SetSpeed(DeltaTime);
+	if (bShowDebug) 
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 0.1, FColor::Red, FString::Printf(TEXT("Current Speed Modifier: %f"), CurrentSprintModifier));
+	}
 }
 
 // Called to bind functionality to input
@@ -44,6 +51,8 @@ void AIslandMan::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAxis(TEXT("LookVertical"), this, &AIslandMan::LookVertical);
 	PlayerInputComponent->BindAxis(TEXT("LookHorizontal"), this, &AIslandMan::LookHorizontal);
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction(TEXT("Sprint"), IE_Pressed, this, &AIslandMan::StartSprint);
+	PlayerInputComponent->BindAction(TEXT("Sprint"), IE_Released, this, &AIslandMan::StopSprint);
 }
 
 void AIslandMan::MoveForward(float AxisValue)
@@ -64,4 +73,42 @@ void AIslandMan::LookVertical(float AxisValue)
 void AIslandMan::LookHorizontal(float AxisValue)
 {
 	AddControllerYawInput(AxisValue * TurnRate * GetWorld()->GetDeltaSeconds());
+}
+
+void AIslandMan::StartSprint()
+{
+	bIsSprinting = true;
+}
+
+void AIslandMan::StopSprint()
+{
+	bIsSprinting = false;
+}
+
+void AIslandMan::SetSpeed(float DeltaTime)
+{
+	GetCharacterMovement()->MaxWalkSpeed = IslandManSpeed * CurrentSprintModifier;
+	if (GetVelocity().Z == 0)
+	{
+		if (bIsSprinting && !GetVelocity().IsZero())
+		{
+			CurrentSprintModifier = FMath::FInterpTo(CurrentSprintModifier, MaxSprintModifier, DeltaTime, SprintRate);
+			if (CurrentSprintModifier >= MaxSprintModifier - 0.2)
+			{
+				CurrentSprintModifier = MaxSprintModifier;
+			}
+		}
+		else if (!bIsSprinting)
+		{
+			CurrentSprintModifier = FMath::FInterpTo(CurrentSprintModifier, 1, DeltaTime, SprintRate);
+			if (CurrentSprintModifier <= 1.2 || GetVelocity().IsZero())
+			{
+				CurrentSprintModifier = 1;
+			}
+			/*if (GetVelocity().IsZero())
+			{
+				CurrentSprintModifier = 1;
+			}*/
+		}
+	}
 }
