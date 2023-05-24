@@ -6,8 +6,6 @@
 #include "GameFramework/Character.h"
 #include "IslandMan.generated.h"
 
-class UCameraComponent;
-
 UCLASS()
 class ISLAND_GAME_API AIslandMan : public ACharacter
 {
@@ -21,6 +19,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintCallable, Category = "Items")
+		void UseItem(class UItems* Item);
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -28,8 +29,10 @@ protected:
 
 
 private:
-	/*UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-		UCameraComponent* FPCamera;*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+		class UCameraComponent* FPCamera;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Items", meta = (AllowPrivateAccess = "true"))
+		class UInventoryComponent* Inventory;
 	UPROPERTY(EditAnywhere, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 		float TurnRate = 50.f;
 	UPROPERTY(EditAnywhere, Category = "Movement", meta = (AllowPrivateAccess = "true"))

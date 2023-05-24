@@ -5,6 +5,8 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Island_Game/Components/InventoryComponent.h"
+#include "Island_Game/Objects/Items.h"
 
 // Sets default values
 AIslandMan::AIslandMan()
@@ -14,10 +16,12 @@ AIslandMan::AIslandMan()
 
 	GetCapsuleComponent()->InitCapsuleSize(34.f, 60.f);
 
-	/*FPCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("First Person Camera"));
+	FPCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("First Person Camera"));
 	FPCamera->SetupAttachment(GetCapsuleComponent());
-	FPCamera->SetRelativeLocation(FVector(0.f, 0.f, 40.f));
-	FPCamera->bUsePawnControlRotation = true;*/
+	FPCamera->bUsePawnControlRotation = true;
+
+	Inventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("Invetory"));
+	Inventory->Capacity = 20;
 }
 
 // Called when the game starts or when spawned
@@ -90,12 +94,16 @@ void AIslandMan::SetSpeed(float DeltaTime)
 	GetCharacterMovement()->MaxWalkSpeed = IslandManSpeed * CurrentSprintModifier;
 	if (GetVelocity().Z == 0)
 	{
-		if (bIsSprinting && !GetVelocity().IsZero())
+		if (bIsSprinting)
 		{
 			CurrentSprintModifier = FMath::FInterpTo(CurrentSprintModifier, MaxSprintModifier, DeltaTime, SprintRate);
 			if (CurrentSprintModifier >= MaxSprintModifier - 0.2)
 			{
 				CurrentSprintModifier = MaxSprintModifier;
+			}
+			if (GetVelocity().IsZero())
+			{
+				CurrentSprintModifier = 1;
 			}
 		}
 		else if (!bIsSprinting)
@@ -105,10 +113,15 @@ void AIslandMan::SetSpeed(float DeltaTime)
 			{
 				CurrentSprintModifier = 1;
 			}
-			/*if (GetVelocity().IsZero())
-			{
-				CurrentSprintModifier = 1;
-			}*/
 		}
+	}
+}
+
+void AIslandMan::UseItem(UItems* Item)
+{
+	if (Item)
+	{
+		Item->Use(this);
+		Item->OnUse(this); //bp version
 	}
 }
