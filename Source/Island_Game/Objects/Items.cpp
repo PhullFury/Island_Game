@@ -9,3 +9,8 @@ UItems::UItems()
 	ItemDisplayName = FText::FromString("Item");
 	UseActionText = FText::FromString("Use");
 }
+
+void UItems::Use(AIslandMan* Character)
+{
+
+}

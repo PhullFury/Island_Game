@@ -22,6 +22,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Items")
 		void UseItem(class UItems* Item);
 
+	FVector IslandManLocation;
+	FRotator IslandManRotation;
+	UPROPERTY(EditAnywhere, Category = "Items", meta = (AllowPrivateAccess = "true"))
+		float Reach = 200.f;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -33,6 +38,8 @@ private:
 		class UCameraComponent* FPCamera;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Items", meta = (AllowPrivateAccess = "true"))
 		class UInventoryComponent* Inventory;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Items", meta = (AllowPrivateAccess = "true"))
+		class UGrabber* Grabber;
 	UPROPERTY(EditAnywhere, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 		float TurnRate = 50.f;
 	UPROPERTY(EditAnywhere, Category = "Movement", meta = (AllowPrivateAccess = "true"))
@@ -54,4 +61,6 @@ private:
 	void StartSprint();
 	void StopSprint();
 	void SetSpeed(float DeltaTime);
+	void Grab();
+	void Release();
 };

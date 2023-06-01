@@ -5,8 +5,11 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Island_Game/Components/Grabber.h"
 #include "Island_Game/Components/InventoryComponent.h"
 #include "Island_Game/Objects/Items.h"
+
+#define OUT
 
 // Sets default values
 AIslandMan::AIslandMan()
@@ -22,6 +25,9 @@ AIslandMan::AIslandMan()
 
 	Inventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("Invetory"));
 	Inventory->Capacity = 20;
+
+	Grabber = CreateDefaultSubobject<UGrabber>(TEXT("Grabber"));
+	Grabber->Player = this;
 }
 
 // Called when the game starts or when spawned
@@ -40,6 +46,9 @@ void AIslandMan::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	SetSpeed(DeltaTime);
+
+	GetController()->GetPlayerViewPoint(OUT IslandManLocation, OUT IslandManRotation);
+
 	if (bShowDebug) 
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 0.1, FColor::Red, FString::Printf(TEXT("Current Speed Modifier: %f"), CurrentSprintModifier));
@@ -57,6 +66,8 @@ void AIslandMan::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction(TEXT("Sprint"), IE_Pressed, this, &AIslandMan::StartSprint);
 	PlayerInputComponent->BindAction(TEXT("Sprint"), IE_Released, this, &AIslandMan::StopSprint);
+	PlayerInputComponent->BindAction(TEXT("Grab"), IE_Pressed, this, &AIslandMan::Grab);
+	PlayerInputComponent->BindAction(TEXT("Grab"), IE_Released, this, &AIslandMan::Release);
 }
 
 void AIslandMan::MoveForward(float AxisValue)
@@ -124,4 +135,14 @@ void AIslandMan::UseItem(UItems* Item)
 		Item->Use(this);
 		Item->OnUse(this); //bp version
 	}
+}
+
+void AIslandMan::Grab()
+{
+	Grabber->Grab();
+}
+
+void AIslandMan::Release()
+{
+	Grabber->Release();
 }
