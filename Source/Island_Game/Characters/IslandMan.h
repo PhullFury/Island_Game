@@ -38,8 +38,8 @@ private:
 		class UCameraComponent* FPCamera;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Items", meta = (AllowPrivateAccess = "true"))
 		class UInventoryComponent* Inventory;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Items", meta = (AllowPrivateAccess = "true"))
-		class UGrabber* Grabber;
+	UPROPERTY(EditAnywhere, Category = "Physics")
+		class UPhysicsHandleComponent* PhysicsHandle;
 	UPROPERTY(EditAnywhere, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 		float TurnRate = 50.f;
 	UPROPERTY(EditAnywhere, Category = "Movement", meta = (AllowPrivateAccess = "true"))
@@ -53,6 +53,7 @@ private:
 
 	float CurrentSprintModifier;
 	bool bIsSprinting;
+	FVector TargetLocation;
 
 	void MoveForward(float AxisValue);
 	void MoveSideways(float AxisValue);
@@ -63,4 +64,5 @@ private:
 	void SetSpeed(float DeltaTime);
 	void Grab();
 	void Release();
+	FHitResult GetHitResults();
 };

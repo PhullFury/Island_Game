@@ -4,10 +4,11 @@
 #include "IslandMan.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "DrawDebugHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Island_Game/Components/Grabber.h"
 #include "Island_Game/Components/InventoryComponent.h"
 #include "Island_Game/Objects/Items.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
 
 #define OUT
 
@@ -26,8 +27,7 @@ AIslandMan::AIslandMan()
 	Inventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("Invetory"));
 	Inventory->Capacity = 20;
 
-	Grabber = CreateDefaultSubobject<UGrabber>(TEXT("Grabber"));
-	Grabber->Player = this;
+	PhysicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("Physics Handle"));
 }
 
 // Called when the game starts or when spawned
@@ -48,10 +48,15 @@ void AIslandMan::Tick(float DeltaTime)
 	SetSpeed(DeltaTime);
 
 	GetController()->GetPlayerViewPoint(OUT IslandManLocation, OUT IslandManRotation);
-
+	TargetLocation = IslandManLocation + IslandManRotation.Vector() * Reach;
+	if (PhysicsHandle && PhysicsHandle->GrabbedComponent)
+	{
+		PhysicsHandle->SetTargetLocation(TargetLocation);
+	}
 	if (bShowDebug) 
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 0.1, FColor::Red, FString::Printf(TEXT("Current Speed Modifier: %f"), CurrentSprintModifier));
+		//GEngine->AddOnScreenDebugMessage(-1, 0.1, FColor::Red, FString::Printf(TEXT("Current Speed Modifier: %f"), CurrentSprintModifier));
+		//DrawDebugLine(GetWorld(), IslandManLocation, IslandManLocation + IslandManRotation.Vector() * Reach, FColor::Red);
 	}
 }
 
@@ -139,10 +144,23 @@ void AIslandMan::UseItem(UItems* Item)
 
 void AIslandMan::Grab()
 {
-	Grabber->Grab();
+	if (GetHitResults().GetActor())
+	{
+		PhysicsHandle->GrabComponentAtLocation(GetHitResults().GetComponent(), NAME_None, TargetLocation);
+	}
 }
 
 void AIslandMan::Release()
 {
-	Grabber->Release();
+	PhysicsHandle->ReleaseComponent();
+}
+
+FHitResult AIslandMan::GetHitResults()
+{
+	FHitResult Hits;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	GetWorld()->LineTraceSingleByObjectType(Hits, IslandManLocation, TargetLocation, FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody), Params);
+
+	return Hits;
 }

@@ -33,6 +33,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	{
 		PhysicsHandle->SetTargetLocation(CurrentLocation);
 	}
+	GetHitResults();
 }
 
 void UGrabber::Grab()
@@ -59,11 +60,11 @@ FHitResult UGrabber::GetHitResults()
 {
 	FHitResult Hit;
 	FVector Start = Player->IslandManLocation;
-	FVector End = Player->IslandManRotation.Vector() * Player->Reach;
+	FVector End = Player->IslandManLocation + Player->IslandManRotation.Vector() * Player->Reach;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(Player);
 	
-	GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, FCollisionObjectQueryParams(ECC_Pawn), Params);
+	GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody), Params);
 
 	return Hit;
 }
