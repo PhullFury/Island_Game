@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "DrawDebugHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Island_Game/Actor/SpawnableActor.h"
 #include "Island_Game/Components/InventoryComponent.h"
 #include "Island_Game/Objects/Items.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
@@ -73,6 +74,7 @@ void AIslandMan::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAction(TEXT("Sprint"), IE_Released, this, &AIslandMan::StopSprint);
 	PlayerInputComponent->BindAction(TEXT("Grab"), IE_Pressed, this, &AIslandMan::Grab);
 	PlayerInputComponent->BindAction(TEXT("Grab"), IE_Released, this, &AIslandMan::Release);
+	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &AIslandMan::Interact);
 }
 
 void AIslandMan::MoveForward(float AxisValue)
@@ -133,6 +135,13 @@ void AIslandMan::SetSpeed(float DeltaTime)
 	}
 }
 
+void AIslandMan::Interact()
+{
+	ASpawnableActor* SpawnedActor = Cast<ASpawnableActor>(GetHitResults().GetActor());
+	Inventory->AddItem(SpawnedActor->LinkedItem);
+	SpawnedActor->Destroy();
+}
+
 void AIslandMan::UseItem(UItems* Item)
 {
 	if (Item)
@@ -160,7 +169,7 @@ FHitResult AIslandMan::GetHitResults()
 	FHitResult Hits;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
-	GetWorld()->LineTraceSingleByObjectType(Hits, IslandManLocation, TargetLocation, FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody), Params);
+	GetWorld()->LineTraceSingleByObjectType(Hits, IslandManLocation, TargetLocation, FCollisionObjectQueryParams(ECC_GameTraceChannel2/*Custom object type - Spawnables*/), Params);
 
 	return Hits;
 }

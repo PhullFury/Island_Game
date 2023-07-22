@@ -24,6 +24,7 @@ public:
 
 	FVector IslandManLocation;
 	FRotator IslandManRotation;
+	FVector TargetLocation;
 	UPROPERTY(EditAnywhere, Category = "Items", meta = (AllowPrivateAccess = "true"))
 		float Reach = 200.f;
 
@@ -53,7 +54,6 @@ private:
 
 	float CurrentSprintModifier;
 	bool bIsSprinting;
-	FVector TargetLocation;
 
 	void MoveForward(float AxisValue);
 	void MoveSideways(float AxisValue);
@@ -65,4 +65,5 @@ private:
 	void Grab();
 	void Release();
 	FHitResult GetHitResults();
+	void Interact();
 };
