@@ -137,9 +137,12 @@ void AIslandMan::SetSpeed(float DeltaTime)
 
 void AIslandMan::Interact()
 {
-	ASpawnableActor* SpawnedActor = Cast<ASpawnableActor>(GetHitResults().GetActor());
-	Inventory->AddItem(SpawnedActor->LinkedItem);
-	SpawnedActor->Destroy();
+	if (GetHitResults().GetActor()) 
+	{
+		ASpawnableActor* SpawnedActor = Cast<ASpawnableActor>(GetHitResults().GetActor());
+		Inventory->AddItem(SpawnedActor->LinkedItem);
+		SpawnedActor->Destroy();
+	}	
 }
 
 void AIslandMan::UseItem(UItems* Item)

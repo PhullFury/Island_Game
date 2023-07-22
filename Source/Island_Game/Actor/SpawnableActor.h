@@ -17,9 +17,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere)
-		TSubclassOf<class UItems> SubItem;
-
 	class UItems* LinkedItem;
 
 

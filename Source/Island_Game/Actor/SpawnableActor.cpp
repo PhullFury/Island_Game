@@ -23,12 +23,10 @@ void ASpawnableActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	LinkedItem =  Cast<UItems>(SubItem);
 }
 
 // Called every frame
 void ASpawnableActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
