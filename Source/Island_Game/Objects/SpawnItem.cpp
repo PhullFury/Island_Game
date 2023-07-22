@@ -16,7 +16,7 @@ void USpawnItem::Use(class AIslandMan* Character)
 		AIslandMan* Player = Cast<AIslandMan>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 		FRotator SpawnRotation = FRotator(0, 0, 180) - Player->IslandManRotation;
 		ASpawnableActor* SpawnActor = GetWorld()->SpawnActor<ASpawnableActor>(SpawnActorClass, Player->TargetLocation, SpawnRotation);
-		SpawnActor->LinkedItem = this;
+		//SpawnActor->LinkedItem = this;
 		OwnerInventory->RemoveItem(this);
 	}
 }

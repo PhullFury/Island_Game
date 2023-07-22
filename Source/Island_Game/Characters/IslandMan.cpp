@@ -140,7 +140,7 @@ void AIslandMan::Interact()
 	if (GetHitResults().GetActor()) 
 	{
 		ASpawnableActor* SpawnedActor = Cast<ASpawnableActor>(GetHitResults().GetActor());
-		Inventory->AddItem(SpawnedActor->LinkedItem);
+		Inventory->AddItem(SpawnedActor->SpawnInventory->Items[0]);
 		SpawnedActor->Destroy();
 	}	
 }

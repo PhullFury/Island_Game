@@ -17,7 +17,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	class UItems* LinkedItem;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Items", meta = (AllowPrivateAccess = "true"))
+		class UInventoryComponent* SpawnInventory;
 
 
 protected:
@@ -30,4 +31,6 @@ private:
 		class USceneComponent* Root;
 	UPROPERTY(EditAnywhere)
 		class UStaticMeshComponent* Mesh;
+
+	class AIslandMan* Player;
 };

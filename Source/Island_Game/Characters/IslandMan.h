@@ -25,8 +25,11 @@ public:
 	FVector IslandManLocation;
 	FRotator IslandManRotation;
 	FVector TargetLocation;
+
 	UPROPERTY(EditAnywhere, Category = "Items", meta = (AllowPrivateAccess = "true"))
 		float Reach = 200.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Items", meta = (AllowPrivateAccess = "true"))
+		class UInventoryComponent* Inventory;
 
 
 protected:
@@ -37,8 +40,6 @@ protected:
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* FPCamera;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Items", meta = (AllowPrivateAccess = "true"))
-		class UInventoryComponent* Inventory;
 	UPROPERTY(EditAnywhere, Category = "Physics")
 		class UPhysicsHandleComponent* PhysicsHandle;
 	UPROPERTY(EditAnywhere, Category = "Movement", meta = (AllowPrivateAccess = "true"))

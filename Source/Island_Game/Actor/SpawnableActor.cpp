@@ -3,7 +3,8 @@
 
 #include "SpawnableActor.h"
 #include "Engine/StaticMesh.h"
-#include "Island_Game/Objects/Items.h"
+#include "Island_Game/Components/InventoryComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ASpawnableActor::ASpawnableActor()
@@ -16,13 +17,15 @@ ASpawnableActor::ASpawnableActor()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(Root);
+
+	SpawnInventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("Invetory"));
+	SpawnInventory->Capacity = 1;
 }
 
 // Called when the game starts or when spawned
 void ASpawnableActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
