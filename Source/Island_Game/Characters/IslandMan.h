@@ -30,6 +30,10 @@ public:
 		float Reach = 200.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Items", meta = (AllowPrivateAccess = "true"))
 		class UInventoryComponent* Inventory;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+		class USceneComponent* WeaponSpawnPoint;
+
+	void SetEquippable(class AEquippableActor* EquippableReference);
 
 
 protected:
@@ -52,9 +56,16 @@ private:
 		float SprintRate = 2.f;
 	UPROPERTY(EditAnywhere, Category = "General", meta = (AllowPrivateAccess = "true"))
 		bool bShowDebug = false;
+	UPROPERTY(EditAnywhere, Category = "Attack", meta = (AllowPrivateAccess = "true"))
+		float MaxHoldPower = 1.f;
+	UPROPERTY(EditAnywhere, Category = "Attack", meta = (AllowPrivateAccess = "true"))
+		float HoldRate = 2.f;
 
 	float CurrentSprintModifier;
 	bool bIsSprinting;
+	float CurrentHoldPower;
+	bool bIsHolding;
+	AEquippableActor* Equippable;
 
 	void MoveForward(float AxisValue);
 	void MoveSideways(float AxisValue);
@@ -67,4 +78,7 @@ private:
 	void Release();
 	FHitResult GetHitResults();
 	void Interact();
+	void StartAttack();
+	void StopAttack();
+	void SetHold(float DeltaTime);
 };

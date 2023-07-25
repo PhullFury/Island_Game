@@ -20,7 +20,4 @@ protected:
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Item")
 		TSubclassOf<class ASpawnableActor> SpawnActorClass;
-
-public: 
-	class UItems* Reference;
 };

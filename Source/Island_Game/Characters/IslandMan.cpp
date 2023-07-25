@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "DrawDebugHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Island_Game/Actor/EquippableActor.h"
 #include "Island_Game/Actor/SpawnableActor.h"
 #include "Island_Game/Components/InventoryComponent.h"
 #include "Island_Game/Objects/Items.h"
@@ -25,6 +26,9 @@ AIslandMan::AIslandMan()
 	FPCamera->SetupAttachment(GetCapsuleComponent());
 	FPCamera->bUsePawnControlRotation = true;
 
+	WeaponSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Weapon Spawn Point"));
+	WeaponSpawnPoint->SetupAttachment(FPCamera);
+
 	Inventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("Invetory"));
 	Inventory->Capacity = 20;
 
@@ -39,6 +43,8 @@ void AIslandMan::BeginPlay()
 	GetCharacterMovement()->MaxWalkSpeed = IslandManSpeed;
 	CurrentSprintModifier = 1;
 	bIsSprinting = false;
+	CurrentHoldPower = 0.1;
+	bIsHolding = false;
 }
 
 // Called every frame
@@ -47,6 +53,7 @@ void AIslandMan::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	SetSpeed(DeltaTime);
+	SetHold(DeltaTime);
 
 	GetController()->GetPlayerViewPoint(OUT IslandManLocation, OUT IslandManRotation);
 	TargetLocation = IslandManLocation + IslandManRotation.Vector() * Reach;
@@ -56,6 +63,7 @@ void AIslandMan::Tick(float DeltaTime)
 	}
 	if (bShowDebug) 
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 0.1, FColor::Red, FString::Printf(TEXT("Current Hold Rate: %f"), CurrentHoldPower));
 		//GEngine->AddOnScreenDebugMessage(-1, 0.1, FColor::Red, FString::Printf(TEXT("Current Speed Modifier: %f"), CurrentSprintModifier));
 		//DrawDebugLine(GetWorld(), IslandManLocation, IslandManLocation + IslandManRotation.Vector() * Reach, FColor::Red);
 	}
@@ -75,6 +83,8 @@ void AIslandMan::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAction(TEXT("Grab"), IE_Pressed, this, &AIslandMan::Grab);
 	PlayerInputComponent->BindAction(TEXT("Grab"), IE_Released, this, &AIslandMan::Release);
 	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &AIslandMan::Interact);
+	PlayerInputComponent->BindAction(TEXT("Attack"), IE_Pressed, this, &AIslandMan::StartAttack);
+	PlayerInputComponent->BindAction(TEXT("Attack"), IE_Released, this, &AIslandMan::StopAttack);
 }
 
 void AIslandMan::MoveForward(float AxisValue)
@@ -145,6 +155,46 @@ void AIslandMan::Interact()
 	}	
 }
 
+void AIslandMan::StartAttack()
+{
+	bIsHolding = true;
+	if (Equippable != nullptr)
+	{
+		if (!Equippable->bIsHoldable)
+		{
+			Equippable->Attack(CurrentHoldPower);
+		}
+	}
+}
+
+void AIslandMan::StopAttack()
+{
+	bIsHolding = false;
+	if (Equippable != nullptr)
+	{
+		if (Equippable->bIsHoldable)
+		{
+			Equippable->Attack(CurrentHoldPower);
+		}
+	}
+}
+
+void AIslandMan::SetHold(float DeltaTime)
+{
+	if (bIsHolding)
+	{
+		CurrentHoldPower = FMath::FInterpTo(CurrentHoldPower, MaxHoldPower, DeltaTime, HoldRate);
+		if (CurrentHoldPower >= 0.9)
+		{
+			CurrentHoldPower = 1;
+		}
+	}
+	else
+	{
+		CurrentHoldPower = 0.1;
+	}
+}
+
 void AIslandMan::UseItem(UItems* Item)
 {
 	if (Item)
@@ -175,4 +225,9 @@ FHitResult AIslandMan::GetHitResults()
 	GetWorld()->LineTraceSingleByObjectType(Hits, IslandManLocation, TargetLocation, FCollisionObjectQueryParams(ECC_GameTraceChannel2/*Custom object type - Spawnables*/), Params);
 
 	return Hits;
+}
+
+void AIslandMan::SetEquippable(class AEquippableActor* EquippableReference)
+{
+	Equippable = EquippableReference;
 }
