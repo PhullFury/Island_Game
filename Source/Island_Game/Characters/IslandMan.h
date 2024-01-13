@@ -25,6 +25,7 @@ public:
 	FVector IslandManLocation;
 	FRotator IslandManRotation;
 	FVector TargetLocation;
+	float CurrentHoldPower;
 
 	UPROPERTY(EditAnywhere, Category = "Items", meta = (AllowPrivateAccess = "true"))
 		float Reach = 200.f;
@@ -63,7 +64,6 @@ private:
 
 	float CurrentSprintModifier;
 	bool bIsSprinting;
-	float CurrentHoldPower;
 	bool bIsHolding;
 	AEquippableActor* Equippable;
 

@@ -184,9 +184,9 @@ void AIslandMan::SetHold(float DeltaTime)
 	if (bIsHolding)
 	{
 		CurrentHoldPower = FMath::FInterpTo(CurrentHoldPower, MaxHoldPower, DeltaTime, HoldRate);
-		if (CurrentHoldPower >= 0.9)
+		if (CurrentHoldPower >= MaxHoldPower - 0.1)
 		{
-			CurrentHoldPower = 1;
+			CurrentHoldPower = MaxHoldPower;
 		}
 	}
 	else

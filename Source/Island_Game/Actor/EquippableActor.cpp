@@ -37,12 +37,12 @@ void AEquippableActor::Tick(float DeltaTime)
 
 void AEquippableActor::Attack(float Modifier)
 {
-	if (bIsHoldable)
+	/*if (bIsHoldable)
 	{
 		GEngine->AddOnScreenDebugMessage(1, 2, FColor::Green, FString::Printf(TEXT("HOLD Attack!!")));
 	}
 	else
 	{
 		GEngine->AddOnScreenDebugMessage(1, 2, FColor::Green, FString::Printf(TEXT("Attack!!")));
-	}	
+	}	*/
 }

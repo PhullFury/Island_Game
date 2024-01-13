@@ -19,8 +19,8 @@ protected:
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Item")
-		TSubclassOf<class AEquippableActor> EquippableActorClass;
+		TSubclassOf<class AActor> EquippableActorClass;
 
-	AEquippableActor* EquippableActor;
+	class AEquippableActor* EquippableActor;
 	bool bIsEquipped = false;
 };

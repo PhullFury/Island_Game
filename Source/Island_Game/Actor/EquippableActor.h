@@ -20,15 +20,15 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Attack", meta = (AllowPrivateAccess = "true"))
 		bool bIsHoldable = false;
 
-	void Attack(float Modifier);
+	virtual void Attack(float Modifier);
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-private:	
 	UPROPERTY(VisibleAnywhere)
 		class USceneComponent* Root;
+
+private:	
 	UPROPERTY(EditAnywhere)
 		class UStaticMeshComponent* StaticMesh;
 	UPROPERTY(EditAnywhere)
